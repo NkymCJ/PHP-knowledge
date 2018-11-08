@@ -196,7 +196,11 @@ function customError0()
 set_error_handler('customError0');
 register_shutdown_function('customError1');
 
-require 'error1.php';
+require 'error.php';
+
+// error.php 文件内容
+echo $test;
+// var_dump($test+-+);
 
 // 分析：首先，如果是E_NOTICE或E_WARNING级别的错误由set_error_handler()处理就好了，调用customError0()，随后因为customError0()函数没有返回FALSE，所以不再执行PHP标准错误处理程序，程序结束。接着，如果E_NOTICE或E_WARNING级别之上的错误，则因为会导致程序中止，执行register_shutdown_function()函数，调用customError1()，随后程序真正结束。通过这样子的设计，就可以捕获并处理所有的错误级别了。
 ```
