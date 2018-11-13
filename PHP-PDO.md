@@ -45,7 +45,7 @@ try {
 
 事务通常是通过把一批查询操作“积蓄”起来然后使之同时生效而实现的，大大地提高了效率
 
-如果需要一个事务，则必须用PDO::beginTransaction()方法来启动。如果底层驱动不支持事务，则抛出一个PDOException异常。一旦开始了事务，可用 PDO::commit() （提交操作）或 PDO::rollBack()（回滚操作）来完成此次事务
+如果需要一个事务，则必须用PDO::beginTransaction()方法来启动。如果底层驱动不支持事务，则抛出一个PDOException异常。一旦开始了事务，可用 PDO::commit()（提交操作）或PDO::rollBack()（回滚操作）来完成此次事务
 
 *PDO仅在驱动层检查是否具有事务处理能力，如果某些运行时条件意味着事务不可用，且数据库服务接受请求去启动一个事务，PDO::beginTransaction()将仍然返回TRUE而且没有错误（例如：在MySQL数据库的MyISAM数据表中使用事务，MyISAM数据表不支持事务，但是MySQL具有事务处理能力）*
 
@@ -72,7 +72,88 @@ try {
 }
 ```
 
-### x. 整合
+### 3. 预处理
 
+通过在查询语句中使用占位符（? / :），提高效率，确保不会发生SQL注入
 
-### y. 总结
+ > bool PDOStatement::execute ([ array $input_parameters ] )
+
+1. 执行预处理语句。如果预处理语句含有参数标记，执行时必须选择以下其中一种做法：
+
+   + 调用PDOStatement::bindParam()绑定 PHP 变量到参数标记，此处不多做介绍
+   + 传递一个只作为输入参数值的数组
+
+2. $input_parameters 可选。不能绑定多个值到一个预处理语句参数。元素个数和预处理语句参数一样多
+   
+   *使用?占位符：array(0)*
+
+   *使用:占位符：array(':name' => 'name')*
+
+   *当元素个数超过预处理语句参数时，执行将会失败并抛出一个错误*
+
+3. return 返回值。成功时返回TRUE，或者在失败时返回FALSE
+
+示例：
+```
+try {
+    $dbh = new PDO($dsn, $user, $pass);
+} catch (PDOException $e) {
+    die($e);
+}
+try {
+    $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    // 使用:占位符
+    $stmt = $dbh->prepare("SELECT * FROM `users` WHERE `gender` = :gender AND `birthday` = :birthday");
+    if ($stmt->execute(array(':gender' => 0, ':birthday' => '2018-11-11'))) {
+        while ($row = $stmt->fetch()) {
+            print_r($row);
+        }
+    }
+
+    // 使用:占位符（bindParam()）
+    $gender = 0;
+    $birthday = '2018-11-11';
+    $stmt = $dbh->prepare("SELECT * FROM `users` WHERE `gender` = :gender AND `birthday` = :birthday");
+    $stmt->bindParam(':gender', $gender);
+    $stmt->bindParam(':birthday', $birthday);
+    if ($stmt->execute()) {
+        while ($row = $stmt->fetch()) {
+            print_r($row);
+        }
+    }
+
+    // 使用?占位符
+    $stmt = $dbh->prepare("SELECT * FROM `users` WHERE `gender` = ? AND `birthday` = ?");
+    if ($stmt->execute(array(0,'2018-11-11'))) {
+        while ($row = $stmt->fetch()) {
+            print_r($row);
+        }
+    }
+
+    // 使用?占位符（bindParam()）
+    $gender = 0;
+    $birthday = '2018-11-11';
+    $stmt = $dbh->prepare("SELECT * FROM `users` WHERE `gender` = ? AND `birthday` = ?");
+    // 从1开始，此处后面还可以补充两个参数（类型与长度）
+    $stmt->bindParam(1, $gender);
+    $stmt->bindParam(2, $birthday);
+    if ($stmt->execute()) {
+        while ($row = $stmt->fetch()) {
+            print_r($row);
+        }
+    }
+} catch (Exception $e) {
+    die($e);
+}
+```
+
+### 4. 其他常用方法
+
+ > public PDOStatement PDO::prepare ( string $statement [, array $driver_options = array() ] )
+
+ > mixed PDOStatement::fetch ([ int $fetch_style [, int $cursor_orientation = PDO::FETCH_ORI_NEXT [, int $cursor_offset = 0 ]]] )
+
+ > bool PDOStatement::bindParam ( mixed $parameter , mixed &$variable [, int $data_type = PDO::PARAM_STR [, int $length [, mixed $driver_options ]]] )
+
+### 5. 总结
+好像没什么好总结的 -,-
