@@ -18,7 +18,7 @@ PHP错误处理机制
 
 ### 2. 设置错误报告的级别
 
- > int error_reporting ( [ int $level ] )
+> int error_reporting ( [ int $level ] )
 
 1. $level 可选。错误报告的级别。未设置$level时，默认当前的错误报告级别
 2. return 返回值。返回旧的错误报告级别。当未设置$level时，返回当前的错误报告级别
@@ -51,7 +51,7 @@ error_reporting(E_ERROR | E_WARNING | E_PARSE | E_NOTICE);
 
 ### 3. 产生用户级别的错误
 
- > bool trigger_error ( string $error_msg [, int $error_type = E_USER_NOTICE ] )
+> bool trigger_error ( string $error_msg [, int $error_type = E_USER_NOTICE ] )
 
 别名：user_error();
 
@@ -69,13 +69,13 @@ trigger_error('E_USER_NOTICE',E_USER_NOTICE);
 
 ### 4. 基本的错误处理（少用）
 
- > die(status) / exit(status)
+> die(status) / exit(status)
 
 1. status 必需。规定在退出脚本之前写入的消息或状态号。如果 status 是字符串，则该函数会在退出前输出字符串。如果 status 是整数，这个值会被用作退出状态。退出状态的值在 0 至 254 之间。退出状态 255 由 PHP 保留，不会被使用。状态 0 用于成功地终止程序
 
 ### 5. 创建自定义错误处理器
 
- > bool error_function ( int $error_level, string $error_message [, string $error_file [, int $error_line [, array $error_context ] ] ] ) {}
+> bool error_function ( int $error_level, string $error_message [, string $error_file [, int $error_line [, array $error_context ] ] ] ) {}
 
 1. $error_level	 必需。包含错误的级别。
 2. $error_message	必需。包含错误的消息。
@@ -86,7 +86,7 @@ trigger_error('E_USER_NOTICE',E_USER_NOTICE);
 
 ### 6. 内建的错误处理程序
 
- > mixed set_error_handler ( callback $error_handler [, int $error_types = E_ALL | E_STRICT ] );
+> mixed set_error_handler ( callback $error_handler [, int $error_types = E_ALL | E_STRICT ] );
 
 1. $error_handler 必需。自定义的错误处理器，见2。此外，它还可以接受类的方法，但必须以数组的形式传递，数组的第一项为“类名”，第二个项为“方法名”
 
@@ -107,7 +107,6 @@ trigger_error('E_USER_NOTICE',E_USER_NOTICE);
     }
     set_error_handler(array("App","customError"));
     ```
-
 2. $error_types 可选。用于屏蔽$error_handler的触发，如果没有设置，则默认是E_ALL | E_STRICT，即$error_handler会在每个错误发生时调用。$error_types中指定的级别会绕过 PHP 标准错误处理程序，其中，会导致error_reporting()失效(除非$error_handler返回FALSE)。
 
     示例：
@@ -121,11 +120,11 @@ trigger_error('E_USER_NOTICE',E_USER_NOTICE);
     set_error_handler('customError',E_NOTICE);
     echo $test; // 触发E_NOTICE级别错误
 
-    // 分析：产生的E_NOTICE级别错误经由set_error_handler()处理，绕过了PHP标准错误处理程序，所以只会打印“customError”。若在$error_handler中返回FALSE，则还可以继续执行PHP标准错误处理程序
+    // 分析：产生的E_NOTICE级别错误经由set_error_handler()处理，绕过了PHP
+    //标准错误处理程序，所以只会打印“customError”。若在$error_handler中返回
+    //FALSE，则还可以继续执行PHP标准错误处理程序
     ```
-
 3. return 返回值。如果之前有定义过错误处理程序，则返回该程序名称的 string；如果是内置的错误处理程序，则返回 NULL。 如果你指定了一个无效的回调函数，同样会返回 NULL。 如果之前的错误处理程序是一个类的方法，此函数会返回一个带类和方法名的索引数组(indexed array)。
-
 
 *在需要时使用 die()结束脚本。因为如果错误处理程序返回了，脚本将会继续执行发生错误的后程序*
 
@@ -135,7 +134,7 @@ trigger_error('E_USER_NOTICE',E_USER_NOTICE);
 
 ### 7. 获取程序最后的错误
 
- > array error_get_last()
+> array error_get_last()
 
 1. return 返回值。返回了一个关联数组，描述了最后错误的信息，以该错误的 "type"、 "message"、"file" 和 "line" 为数组的键。 如果错误由 PHP 内置函数导致的，"message"会以该函数名开头。 如果没有错误则返回 NULL
 
@@ -150,10 +149,9 @@ var_dump(error_get_last()); // error_get_last()返回这行的信息
 
 ### 8. PHP结束时执行的函数
 
- > void register_shutdown_function ( callable $callback [, mixed $parameter [, mixed $... ]] )
+> void register_shutdown_function ( callable $callback [, mixed $parameter [, mixed $... ]] )
 
 1. $callback 必需。中止回调的函数，它会在脚本执行完成或者 exit() 后被调用
-
 2. $parameter 可选。设置传入中止回调函数的参数
 
 *此函数无返回值*
@@ -202,9 +200,13 @@ require 'error.php';
 echo $test;
 // var_dump($test+-+);
 
-// 分析：首先，如果是E_NOTICE或E_WARNING级别的错误由set_error_handler()处理就好了，调用customError0()，随后因为customError0()函数没有返回FALSE，所以不再执行PHP标准错误处理程序，程序结束。接着，如果E_NOTICE或E_WARNING级别之上的错误，则因为会导致程序中止，执行register_shutdown_function()函数，调用customError1()，随后程序真正结束。通过这样子的设计，就可以捕获并处理所有的错误级别了。
+// 分析：首先，如果是E_NOTICE或E_WARNING级别的错误由set_error_handler()处理就好了
+//，调用customError0()，随后因为customError0()函数没有返回FALSE，所以不再执行PHP
+//标准错误处理程序，程序结束。接着，如果E_NOTICE或E_WARNING级别之上的错误，则因为
+//会导致程序中止，执行register_shutdown_function()函数，调用customError1()，
+//随后程序真正结束。通过这样子的设计，就可以捕获并处理所有的错误级别了
 ```
 
 ### 10. 总结
 
-在实际开发过程中，需要通过参数的错误级别，不同错误级别进行不同处理，例如部分错误级别需输出成日志文件。
+在实际开发过程中，需要通过参数的错误级别，不同错误级别进行不同处理，例如部分错误级别需输出成日志文件
