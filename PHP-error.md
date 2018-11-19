@@ -1,4 +1,4 @@
-# PHP-error
+# PHP-Error
 
 PHP错误处理机制
 
