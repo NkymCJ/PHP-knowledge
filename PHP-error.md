@@ -10,37 +10,37 @@ PHP错误处理机制
 | 2 | E_WARNING | 运行时警告 (非致命错误)。仅给出提示信息，但是脚本不会终止运行 |
 | 4 | E_PARSE  | 编译时语法解析错误。解析错误仅仅由分析器产生 |
 | 8 | E_NOTICE | 运行时通知。表示脚本遇到可能会表现为错误的情况，但是在可以正常运行的脚本里面也可能会有类似的通知 |
-| 256 | E_USER_ERROR | 用户产生的错误信息。类似 E_ERROR, 但是是由用户自己在代码中使用PHP函数 trigger_error()来产生的 |
-| 512 | E_USER_WARNING | 用户产生的警告信息。类似 E_WARNING, 但是是由用户自己在代码中使用PHP函数 trigger_error()来产生的 |
-| 1024 | E_USER_NOTICE | 用户产生的通知信息。类似 E_NOTICE, 但是是由用户自己在代码中使用PHP函数 trigger_error()来产生的 |
+| 256 | E_USER_ERROR | 用户产生的错误信息。类似 E_ERROR, 但是是由用户自己在代码中使用PHP函数 trigger_error() 来产生的 |
+| 512 | E_USER_WARNING | 用户产生的警告信息。类似 E_WARNING, 但是是由用户自己在代码中使用PHP函数 trigger_error() 来产生的 |
+| 1024 | E_USER_NOTICE | 用户产生的通知信息。类似 E_NOTICE, 但是是由用户自己在代码中使用PHP函数 trigger_error() 来产生的 |
 | 2048 | E_STRICT | 启用 PHP 对代码的修改建议，以确保代码具有最佳的互操作性和向前兼容性 |
-| 8191 | E_ALL（在 PHP 6.0，E_STRICT 是 E_ALL 的一部分） | E_STRICT出外的所有错误和警告信息（在 PHP 6.0之后，E_STRICT 也是 E_ALL 的一部分） |
+| 8191 | E_ALL（在 PHP 6.0，E_STRICT 是 E_ALL 的一部分） | E_STRICT出外的所有错误和警告信息（PHP 6.0+，E_STRICT 也是 E_ALL 的一部分） |
 
 ### 2. 设置错误报告的级别
 
 > int error_reporting ( [ int $level ] )
 
-1. $level 可选。错误报告的级别。未设置$level时，默认当前的错误报告级别
-2. return 返回值。返回旧的错误报告级别。当未设置$level时，返回当前的错误报告级别
+1. $level 可选。错误报告的级别。未设置 $level 时，默认当前的错误报告级别
+2. return 返回值。返回旧的错误报告级别。当未设置 $level 时，返回当前的错误报告级别
 
 示例:
 ```
 // 关闭所有PHP错误报告
 error_reporting(0);
 // echo $a;
-// 报告所有 PHP 错误
+// 报告所有PHP错误
 error_reporting(-1);
 // echo $a;
-// 报告所有 PHP 错误
+// 报告所有PHP错误
 error_reporting(E_ALL);
 // echo $a;
-// 报告除E_NOTICE外的其他所有错误
+// 报告除 E_NOTICE 外的其他所有错误
 error_reporting(E_ALL ^ E_NOTICE);
 // echo $a;
-// 报告除E_NOTICE外的其他所有错误
+// 报告除 E_NOTICE 外的其他所有错误
 error_reporting(E_ALL & ~ E_NOTICE);
 // echo $a;
-// 报告除E_NOTICE和E_USER_WARNING外的其他所有错误
+// 报告除 E_NOTICE 和 E_USER_WARNING 外的其他所有错误
 error_reporting(E_ALL & ~ (E_NOTICE | E_USER_WARNING);
 // echo $a;
 // trigger_error('E_USER_WARNING',E_USER_WARNING);
@@ -81,8 +81,8 @@ trigger_error('E_USER_NOTICE',E_USER_NOTICE);
 2. $error_message	必需。包含错误的消息。
 3. $error_file	可选。包含发生错误的文件名。
 4. $error_line	可选。包含错误发生的行号。
-5. $error_context	可选。包含错误触发处作用域内所有变量的数组。*PHP 7.2.0后弃用*
-6. return 返回值。*若返回FALSE，还会执行PHP标准错误处理程序*
+5. $error_context	可选。包含错误触发处作用域内所有变量的数组。*PHP 7.2.0+弃用*
+6. return 返回值。*若返回 FALSE，还会执行PHP标准错误处理程序*
 
 ### 6. 内建的错误处理程序
 
@@ -107,7 +107,7 @@ trigger_error('E_USER_NOTICE',E_USER_NOTICE);
     }
     set_error_handler(array("App","customError"));
     ```
-2. $error_types 可选。用于屏蔽$error_handler的触发，如果没有设置，则默认是E_ALL | E_STRICT，即$error_handler会在每个错误发生时调用。$error_types中指定的级别会绕过 PHP 标准错误处理程序，其中，会导致error_reporting()失效(除非$error_handler返回FALSE)。
+2. $error_types 可选。用于屏蔽 $error_handler 的触发，如果没有设置，则默认是 E_ALL | E_STRICT，即$error_handler 会在每个错误发生时调用。$error_types 中指定的级别会绕过PHP标准错误处理程序，其中，会导致 error_reporting() 失效(除非 $error_handler 返回 FALSE)。
 
     示例：
     ```
@@ -136,7 +136,7 @@ trigger_error('E_USER_NOTICE',E_USER_NOTICE);
 
 > array error_get_last()
 
-1. return 返回值。返回了一个关联数组，描述了最后错误的信息，以该错误的 "type"、 "message"、"file" 和 "line" 为数组的键。 如果错误由 PHP 内置函数导致的，"message"会以该函数名开头。 如果没有错误则返回 NULL
+1. return 返回值。返回了一个关联数组，描述了最后错误的信息，以该错误的 "type"、 "message"、"file" 和 "line" 为数组的键。 如果错误由PHP内置函数导致的，"message"会以该函数名开头。 如果没有错误则返回 NULL
 
 示例：
 ```
@@ -175,7 +175,7 @@ register_shutdown_function('shutdown1');
 
 ### 9. 整合
 
-> 捕获所有的错误并进行处理：set_error_handler()与register_shutdown_function()结合使用
+> 捕获所有的错误并进行处理：set_error_handler() 与 register_shutdown_function() 结合使用
 
 示例：
 ```
@@ -200,10 +200,10 @@ require 'error.php';
 echo $test;
 // var_dump($test+-+);
 
-// 分析：首先，如果是E_NOTICE或E_WARNING级别的错误由set_error_handler()处理就好了
-//，调用customError0()，随后因为customError0()函数没有返回FALSE，所以不再执行PHP
-//标准错误处理程序，程序结束。接着，如果E_NOTICE或E_WARNING级别之上的错误，则因为
-//会导致程序中止，执行register_shutdown_function()函数，调用customError1()，
+// 分析：首先，如果是 E_NOTICE 或 E_WARNING 级别的错误由 set_error_handler() 处理就好了
+//，调用 customError0() ，随后因为 customError0() 函数没有返回 FALSE ，所以不再执行PHP
+//标准错误处理程序，程序结束。接着，如果 E_NOTICE 或 E_WARNING 级别之上的错误，则因为
+//会导致程序中止，执行 register_shutdown_function() 函数，调用 customError1()，
 //随后程序真正结束。通过这样子的设计，就可以捕获并处理所有的错误级别了
 ```
 
