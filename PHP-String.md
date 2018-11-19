@@ -162,4 +162,57 @@ PHP字符串最大可以达到2GB
 
 4. nowdoc格式（PHP 5.3+）
     
-    nowdoc格式与heredoc格式相似，但不进行解析操作
+    - nowdoc格式与heredoc格式相似，但不进行解析操作
+    - 声明标识符使用单引号''包裹
+
+    示例：
+    ```
+    $str = <<<'EOD'
+    Example of string
+    spanning multiple lines
+    using nowdoc syntax.
+    EOD;
+    print $str;
+    ```
+
+### 2. 变量解析
+
+当字符串用双引号或 heredoc 结构定义时，其中的变量将会被解析
+
+1. 简单语法
+
+    - 当PHP解析器遇到一个美元符号（$）时，它会去组合尽量多的标识以形成一个合法的变量名，但只适合简单的结构
+    - 一个数组索引或一个对象属性也可被解析。数组索引要用方括号（]）来表示索引结束的边际，对象属性则是和上述的变量规则相同
+
+    示例：
+    ```
+    $str = 'Hello World';
+    print "$str"; // 打印 Hello World
+    $arr = array(0,1,2,3,4,5,6);
+    print $arr[0]; // 打印 0
+    print $arr[6]; // 打印 6
+    class obj {
+        public $prop0 = 'Hello World';
+        public $prop1 = array(0,1,2,3,4,5,6);
+    }
+    $obj = new obj();
+    print "$obj->prop0"; // 打印 Hello World
+    print "$obj->prop1[0]"; // 报错 NOTICE
+    ```
+
+2. 复杂（花括号{}）语法
+    - 使用花括号{}可以解析更复杂的表达式，且$需紧挨着{。
+    - 使用花括号相当于告诉PHP解析器这是一个变量，需要解析，其实最好就是用这个语法，明确变量名的界线
+    
+    示例：
+    ```
+    class obj
+    {
+        public $prop0 = 'Hello World';
+        public $prop1 = array(0, 1, 2, 3, 4, 5, 6);
+    }
+    $obj = new obj();
+    print "{$obj->prop1[0]}"; // 打印 0
+    $arr = array(array(0, 1, 2, 3, 4, 5, 6), 1, 2, 3, 4, 5, 6);
+    print "{$arr[0][6]}"; // 打印 6
+    ```
