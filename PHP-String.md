@@ -169,6 +169,7 @@ PHP字符串最大可以达到2GB
 4. nowdoc格式（PHP 5.3+）
     
     - nowdoc格式与heredoc格式相似，但不进行解析操作
+    
     - 声明标识符使用单引号''包裹
 
     示例：
@@ -243,3 +244,8 @@ PHP字符串最大可以达到2GB
     ```
 
 ### 3. 常用的字符串操作函数
+
+---
+STARTED 2018/11/19 ChenJian
+
+MODIFIED 2018/11/19 ChenJian
