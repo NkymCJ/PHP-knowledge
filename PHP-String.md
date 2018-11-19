@@ -219,7 +219,7 @@ PHP字符串最大可以达到2GB
     $arr = array(array(0, 1, 2, 3, 4, 5, 6), 1, 2, 3, 4, 5, 6);
     print "{$arr[0][6]}"; // 打印 6
 
-    // 静态类变量和类常亮在{$}中使用
+    // 静态类变量和类常量在{$}中使用
     class obj {
         const str0 = 'str0';
         public static $str1 = 'str1';
